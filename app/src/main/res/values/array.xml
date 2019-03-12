@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_genre_entries">
+        <item>@string/pref_genre_pop</item>
+        <item>@string/pref_genre_hiphop</item>
+        <item>@string/pref_genre_workout</item>
+        <item>@string/pref_genre_alternative</item>
+        <item>@string/pref_genre_dance</item>
+        <item>@string/pref_genre_cry</item>
+    </string-array>
+
+    <string-array name="pref_genre_values">
+        <item>@string/pref_genre_pop_value</item>
+        <item>@string/pref_genre_hiphop_value</item>
+        <item>@string/pref_genre_workout_value</item>
+        <item>@string/pref_genre_alternative_value</item>
+        <item>@string/pref_genre_dance_value</item>
+        <item>@string/pref_genre_cry_value</item>
+    </string-array>
+</resources>
