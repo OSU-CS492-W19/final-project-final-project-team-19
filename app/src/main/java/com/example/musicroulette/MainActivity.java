@@ -1,16 +1,20 @@
 package com.example.musicroulette;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 
-
+import com.example.musicroulette.utils.NetworkUtils;
 import com.example.musicroulette.utils.SpotifyUtils;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -24,23 +28,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        RequestCode();
-        RequestToken();
-    }
+        if(mAccessToken == null) {
+            RequestToken();
+        }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    public void RequestCode() {
-        final AuthenticationRequest request = SpotifyUtils.getAuthenticationRequest(AuthenticationResponse.Type.CODE);
-        AuthenticationClient.openLoginActivity(this, SpotifyUtils.AUTH_CODE_REQUEST_CODE, request);
     }
 
     public void RequestToken() {
@@ -61,10 +53,97 @@ public class MainActivity extends AppCompatActivity {
 
         if (SpotifyUtils.AUTH_TOKEN_REQUEST_CODE == requestCode) {
             mAccessToken = response.getAccessToken();
-            Log.d(TAG, "Access Token: " + mAccessToken);
+            Log.d(TAG, "Access Token: " + response.getAccessToken());
         } else if (SpotifyUtils.AUTH_CODE_REQUEST_CODE == requestCode) {
             mAccessCode = response.getCode();
             Log.d(TAG, "Access Code: " + mAccessCode);
+        }
+    }
+
+    /** AsyncTask: RetrieveAllMusicCategoriesTask
+     *  Description: Retrieve All Music Categories/Genres
+     *  Params: url, access token
+     *  Example:
+     *          ArrayList<String> params = new ArrayList<>();
+     *          params.add(SpotifyUtils.buildGetAllCategoriesURL());
+     *          params.add(mAccessToken);
+     *          new RetrieveAllMusicCategoriesTask().execute(params);
+     **/
+    class RetrieveAllMusicCategoriesTask extends AsyncTask<ArrayList<String>, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(ArrayList<String>... params) {
+            String url = params[0].get(0);
+            Log.d(TAG, "URL: " + url);
+            String accessToken = params[0].get(1);
+            Log.d(TAG, "ACCESS TOKEN: " + accessToken);
+            String results = null;
+
+            try {
+                results = NetworkUtils.doHTTPGet(url, accessToken);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Log.d(TAG, "Do in Background");
+            return results;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            if(s != null) {
+                Log.d(TAG, s);
+            }
+            else {
+                Log.d(TAG, "result is null");
+            }
+        }
+    }
+
+    /** AsyncTask: RetrievePlaylistsOfAGenre
+     *  Description: Retrieve All Playlists of a Genere
+     *  Params: url, access token
+     *  Example:
+     *          ArrayList<String> params = new ArrayList<>();
+     *          params.add(SpotifyUtils.buildGetACategorysPlaylistsBaseURL("pop"));
+     *          params.add(mAccessToken);
+     *          new RetrievePlaylistsOfAGenre().execute(params);
+     **/
+    class RetrievePlaylistsOfAGenre extends AsyncTask<ArrayList<String>, Void, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(ArrayList<String>... params) {
+            String url = params[0].get(0);
+            String accessToken = params[0].get(1);
+            String results = null;
+
+            try {
+                results = NetworkUtils.doHTTPGet(url, accessToken);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Log.d(TAG, "Do in Background");
+            return results;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            if(s != null) {
+                Log.d(TAG, s);
+            }
+            else {
+                Log.d(TAG, "result is null");
+            }
         }
     }
 

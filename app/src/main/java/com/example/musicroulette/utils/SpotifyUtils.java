@@ -5,9 +5,6 @@ import android.net.Uri;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
-import okhttp3.MultipartBody;
-import okhttp3.Request;
-import okhttp3.RequestBody;
 
 public class SpotifyUtils {
 
@@ -27,5 +24,28 @@ public class SpotifyUtils {
                 .setScopes(new String[]{"streaming"})
                 .setCampaign("your-campaign-token")
                 .build();
+    }
+
+    /*************************************************************
+     * GET ALL CATEGORIES
+     *************************************************************/
+    private final static String GET_ALL_CATEGORIES_BASE_URL = "https://api.spotify.com/v1/browse/categories";
+
+    public static String buildGetAllCategoriesURL() {
+        return GET_ALL_CATEGORIES_BASE_URL;
+    }
+
+    /*************************************************************
+     * GET A CATEGORY'S PLAYLISTS
+     * Get a list of Spotify playlists tagged with a particular category.
+     *************************************************************/
+    private final static String GET_A_CATEGORYS_PLAYLISTS_BASE_URL = "https://api.spotify.com/v1/browse/categories";
+
+    public static String buildGetACategorysPlaylistsBaseURL(String category_id) {
+        return Uri.parse(GET_A_CATEGORYS_PLAYLISTS_BASE_URL).buildUpon()
+                .appendPath(category_id)
+                .appendPath("playlists")
+                .build()
+                .toString();
     }
 }
