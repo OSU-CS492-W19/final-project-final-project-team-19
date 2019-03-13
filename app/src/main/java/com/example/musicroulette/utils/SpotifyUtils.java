@@ -2,6 +2,7 @@ package com.example.musicroulette.utils;
 
 import android.net.Uri;
 
+import com.google.gson.Gson;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
@@ -33,6 +34,33 @@ public class SpotifyUtils {
 
     public static String buildGetAllCategoriesURL() {
         return GET_ALL_CATEGORIES_BASE_URL;
+    }
+
+    public static SpotifyCategories parseSpotifyCategories(String json) {
+        Gson gson = new Gson();
+        SpotifyCategoriesResults results = gson.fromJson(json, SpotifyCategoriesResults.class);
+        return results.categories;
+    }
+
+    public static class SpotifyCategoriesResults {
+        public SpotifyCategories categories;
+    }
+
+    public static class SpotifyCategories {
+        public SpotifyCategory[] items;
+    }
+
+    public static class SpotifyCategory {
+        public String href;
+        public CategoryIcon[] icons;
+        public String id;
+        public String name;
+    }
+
+    public static class CategoryIcon {
+        public int height;
+        public String url;
+        public int width;
     }
 
     /*************************************************************

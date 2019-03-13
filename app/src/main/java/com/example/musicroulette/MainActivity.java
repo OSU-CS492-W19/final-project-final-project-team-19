@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
 
 import com.example.musicroulette.utils.NetworkUtils;
 import com.example.musicroulette.utils.SpotifyUtils;
@@ -98,6 +99,8 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String s) {
             if(s != null) {
                 Log.d(TAG, s);
+                SpotifyUtils.SpotifyCategories categories = SpotifyUtils.parseSpotifyCategories(s);
+                // Do something with the parsed categories here
             }
             else {
                 Log.d(TAG, "result is null");
