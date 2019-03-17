@@ -6,6 +6,8 @@ import com.google.gson.Gson;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
+import java.net.URI;
+
 
 public class SpotifyUtils {
 
@@ -52,12 +54,12 @@ public class SpotifyUtils {
 
     public static class SpotifyCategory {
         public String href;
-        public CategoryIcon[] icons;
+        public Icon[] icons;
         public String id;
         public String name;
     }
 
-    public static class CategoryIcon {
+    public static class Icon {
         public int height;
         public String url;
         public int width;
@@ -75,5 +77,34 @@ public class SpotifyUtils {
                 .appendPath("playlists")
                 .build()
                 .toString();
+    }
+
+    public static SpotifyCategoryPlaylists parseSpotifyCategoryPlaylists(String json) {
+        Gson gson = new Gson();
+        SpotifyCategoryPlaylistsResults results = gson.fromJson(json, SpotifyCategoryPlaylistsResults.class);
+        return results.playlists;
+    }
+
+    public static class SpotifyCategoryPlaylistsResults {
+        public SpotifyCategoryPlaylists playlists;
+    }
+
+    public static class SpotifyCategoryPlaylists {
+        public String href;
+        public SpotifyPlaylist[] items;
+        public int total;
+    }
+
+    public static class SpotifyPlaylist {
+        public ExternalURLs external_urls;
+        public String href;
+        public String id;
+        public Icon[] images;
+        public String name;
+        public URI uri;
+    }
+
+    public static class ExternalURLs {
+        public String spotify;
     }
 }
