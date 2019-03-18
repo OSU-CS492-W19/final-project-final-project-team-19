@@ -2,12 +2,12 @@ package com.example.musicroulette.utils;
 
 import android.net.Uri;
 
+import com.google.gson.Gson;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
-import okhttp3.MultipartBody;
-import okhttp3.Request;
-import okhttp3.RequestBody;
+import java.net.URI;
+
 
 public class SpotifyUtils {
 
@@ -27,5 +27,84 @@ public class SpotifyUtils {
                 .setScopes(new String[]{"streaming"})
                 .setCampaign("your-campaign-token")
                 .build();
+    }
+
+    /*************************************************************
+     * GET ALL CATEGORIES
+     *************************************************************/
+    private final static String GET_ALL_CATEGORIES_BASE_URL = "https://api.spotify.com/v1/browse/categories";
+
+    public static String buildGetAllCategoriesURL() {
+        return GET_ALL_CATEGORIES_BASE_URL;
+    }
+
+    public static SpotifyCategories parseSpotifyCategories(String json) {
+        Gson gson = new Gson();
+        SpotifyCategoriesResults results = gson.fromJson(json, SpotifyCategoriesResults.class);
+        return results.categories;
+    }
+
+    public static class SpotifyCategoriesResults {
+        public SpotifyCategories categories;
+    }
+
+    public static class SpotifyCategories {
+        public SpotifyCategory[] items;
+    }
+
+    public static class SpotifyCategory {
+        public String href;
+        public Icon[] icons;
+        public String id;
+        public String name;
+    }
+
+    public static class Icon {
+        public int height;
+        public String url;
+        public int width;
+    }
+
+    /*************************************************************
+     * GET A CATEGORY'S PLAYLISTS
+     * Get a list of Spotify playlists tagged with a particular category.
+     *************************************************************/
+    private final static String GET_A_CATEGORYS_PLAYLISTS_BASE_URL = "https://api.spotify.com/v1/browse/categories";
+
+    public static String buildGetACategorysPlaylistsBaseURL(String category_id) {
+        return Uri.parse(GET_A_CATEGORYS_PLAYLISTS_BASE_URL).buildUpon()
+                .appendPath(category_id)
+                .appendPath("playlists")
+                .build()
+                .toString();
+    }
+
+    public static SpotifyCategoryPlaylists parseSpotifyCategoryPlaylists(String json) {
+        Gson gson = new Gson();
+        SpotifyCategoryPlaylistsResults results = gson.fromJson(json, SpotifyCategoryPlaylistsResults.class);
+        return results.playlists;
+    }
+
+    public static class SpotifyCategoryPlaylistsResults {
+        public SpotifyCategoryPlaylists playlists;
+    }
+
+    public static class SpotifyCategoryPlaylists {
+        public String href;
+        public SpotifyPlaylist[] items;
+        public int total;
+    }
+
+    public static class SpotifyPlaylist {
+        public ExternalURLs external_urls;
+        public String href;
+        public String id;
+        public Icon[] images;
+        public String name;
+        public URI uri;
+    }
+
+    public static class ExternalURLs {
+        public String spotify;
     }
 }
