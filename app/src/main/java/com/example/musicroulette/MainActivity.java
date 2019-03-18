@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
 
+
 import com.example.musicroulette.utils.NetworkUtils;
 import com.example.musicroulette.utils.SpotifyUtils;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
@@ -148,6 +149,8 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String s) {
             if(s != null) {
                 Log.d(TAG, s);
+                SpotifyUtils.SpotifyCategoryPlaylists playlists = SpotifyUtils.parseSpotifyCategoryPlaylists(s);
+                // Do something with the parsed category playlists here
             }
             else {
                 Log.d(TAG, "result is null");
