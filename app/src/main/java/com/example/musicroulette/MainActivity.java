@@ -6,6 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.widget.ImageView;
+
 
 import com.example.musicroulette.utils.NetworkUtils;
 import com.example.musicroulette.utils.SpotifyUtils;
@@ -23,11 +26,15 @@ public class MainActivity extends AppCompatActivity {
 
     private String mAccessToken;
     private String mAccessCode;
+    private ImageView mAlbumImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mAlbumImage = findViewById(R.id.album_art);
+        mAlbumImage.setImageResource(R.drawable.slime);
 
         if(mAccessToken == null) {
             RequestToken();
