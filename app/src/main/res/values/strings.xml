@@ -4,6 +4,8 @@
     <string name="spotify_redirect_scheme">musicroulette</string>
     <string name="spotify_redirect_host">spotify</string>
 
+    <string name="open_in_spotify_btn">Open In Spotify</string>
+
     <string name="pref_genre_key">pref_genre</string>
     <string name="pref_genre_title">Genres</string>
     <string name="pref_genre_default_value">@string/pref_genre_pop</string>

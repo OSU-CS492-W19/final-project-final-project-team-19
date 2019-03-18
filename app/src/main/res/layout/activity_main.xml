@@ -40,7 +40,7 @@
         android:id="@+id/btn_open_spotify"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="OPEN IN SPOTIFY"
+        android:text="@string/open_in_spotify_btn"
         android:textSize="22sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
