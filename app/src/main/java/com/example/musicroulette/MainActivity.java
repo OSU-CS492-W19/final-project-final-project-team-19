@@ -40,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences mPrefs;
     private Transformation transformation;
 
+    private Button mOpenSpotify;
+    private String mSongURL;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -56,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         mAlbumImage = findViewById(R.id.album_art);
         mAlbumImage.setImageResource(R.drawable.slime);
         mShuffle = findViewById(R.id.shuffle_button);
+        mOpenSpotify = findViewById(R.id.btn_open_spotify);
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -81,6 +85,13 @@ public class MainActivity extends AppCompatActivity {
                 params.add(url);
                 params.add(mAccessToken);
                 new RetrievePlaylistsOfAGenre().execute(params);
+            }
+        });
+
+        mOpenSpotify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
     }
@@ -267,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String s) {
             if(s != null) {
                 SpotifyUtils.Track[] tracks = SpotifyUtils.parseSpotifyPlaylist(s);
-                Log.d(TAG, "=== Number of tracks in playlist: " + tracks.length);
+                //Log.d(TAG, "=== Number of tracks in playlist: " + tracks.length);
 
                 //If tracks were found
                 if(tracks.length > 0){
@@ -278,12 +289,15 @@ public class MainActivity extends AppCompatActivity {
 
                     //Load the track's album image
                     if(tracks[rand].track.album.images.length > 0) {
-                        Log.d(TAG, "=== Track Album Image: " + tracks[rand].track.album.images[0].url);
+                        //Log.d(TAG, "=== Track Album Image: " + tracks[rand].track.album.images[0].url);
                         Picasso.get()
                                 .load(tracks[rand].track.album.images[0].url)
                                 .transform(transformation)
                                 .into(mAlbumImage);
                     }
+
+                    Log.d(TAG, "=== Track URL: " + tracks[rand].track.href);
+                    mSongURL = tracks[rand].track.href;
                 }
             }
             else {
