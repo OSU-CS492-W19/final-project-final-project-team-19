@@ -2,18 +2,18 @@ package com.example.musicroulette;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.musicroulette.utils.NetworkUtils;
 import com.example.musicroulette.utils.SpotifyUtils;
@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private String mAccessToken;
     private String mAccessCode;
     private ImageView mAlbumImage;
+    private TextView mSongName;
+    private TextView mArtistName;
     private Button mShuffle;
     private SharedPreferences mPrefs;
     private Transformation transformation;
@@ -43,16 +45,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-		transformation = new RoundedTransformationBuilder()
-				.cornerRadiusDp(20)
-				.oval(false)
-				.build();
+//		transformation = new RoundedTransformationBuilder()
+//				.cornerRadiusDp(20)
+//				.oval(false)
+//				.build();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         mAlbumImage = findViewById(R.id.album_art);
-        mAlbumImage.setImageResource(R.drawable.slime);
+//        mAlbumImage.setImageResource(R.drawable.slime);
         mShuffle = findViewById(R.id.shuffle_button);
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -61,11 +63,15 @@ public class MainActivity extends AppCompatActivity {
             RequestToken();
         }
 
-        // Placeholder Image
-		Picasso.get()
-				.load("https://developer.spotify.com/assets/branding-guidelines/icon4@2x.png")
-				.transform(transformation)
-				.into(mAlbumImage);
+        // Placeholder image if there is no current image in the view
+		if (mAlbumImage.getDrawable() == null)
+		{
+			Picasso.get()
+					.load("https://developer.spotify.com/assets/branding-guidelines/icon4@2x.png")
+//					.transform(transformation)
+					.into(mAlbumImage);
+		}
+
 
         mShuffle.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -264,6 +270,10 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String s) {
+
+        	mArtistName = findViewById(R.id.song_artist);
+        	mSongName = findViewById(R.id.song_title);
+
             if(s != null) {
                 SpotifyUtils.Track[] tracks = SpotifyUtils.parseSpotifyPlaylist(s);
                 Log.d(TAG, "=== Number of tracks in playlist: " + tracks.length);
@@ -272,15 +282,18 @@ public class MainActivity extends AppCompatActivity {
                 if(tracks.length > 0){
                     //Get a random number between 0 and the number of tracks in the playlist
                     int rand = new Random().nextInt(tracks.length);
-                    Log.d(TAG, "=== Random Track Name: " + tracks[rand].track.name);
+                    String randomTrack = tracks[rand].track.name;
+                    String randomArtist = tracks[rand].track.name;
+                    Log.d(TAG, "=== Random Track Name: " + randomTrack);
+
                     //Do something with the track name?
+					mSongName.setText(randomTrack);
 
                     //Load the track's album image
                     if(tracks[rand].track.album.images.length > 0) {
                         Log.d(TAG, "=== Track Album Image: " + tracks[rand].track.album.images[0].url);
                         Picasso.get()
                                 .load(tracks[rand].track.album.images[0].url)
-                                .transform(transformation)
                                 .into(mAlbumImage);
                     }
                 }
