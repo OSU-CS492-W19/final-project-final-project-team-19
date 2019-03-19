@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
             RequestToken();
         }
 
-        // test for album view
+        // test loading image from url
         Picasso.get().load("https://is5-ssl.mzstatic.com/image/thumb/Music118/v4/ab/ea/31/abea3194-5ec0-47c8-3644-7e76c195f126/8718857500339.png/999999999x0w.jpg").into(mAlbumImage);
 
     }
@@ -80,10 +80,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (SpotifyUtils.AUTH_TOKEN_REQUEST_CODE == requestCode) {
             mAccessToken = response.getAccessToken();
-            Log.d(TAG, "Access Token: " + response.getAccessToken());
+            Log.d(TAG, "== Access Token: " + response.getAccessToken());
         } else if (SpotifyUtils.AUTH_CODE_REQUEST_CODE == requestCode) {
             mAccessCode = response.getCode();
-            Log.d(TAG, "Access Code: " + mAccessCode);
+            Log.d(TAG, "== Access Code: " + mAccessCode);
         }
     }
 
@@ -106,9 +106,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(ArrayList<String>... params) {
             String url = params[0].get(0);
-            Log.d(TAG, "URL: " + url);
+            Log.d(TAG, "== URL: " + url);
             String accessToken = params[0].get(1);
-            Log.d(TAG, "ACCESS TOKEN: " + accessToken);
+            Log.d(TAG, "== ACCESS TOKEN: " + accessToken);
             String results = null;
 
             try {
@@ -117,19 +117,19 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            Log.d(TAG, "Do in Background");
+            Log.d(TAG, "== Do in Background");
             return results;
         }
 
         @Override
         protected void onPostExecute(String s) {
             if(s != null) {
-                Log.d(TAG, s);
+                Log.d(TAG, "== " + s);
                 SpotifyUtils.SpotifyCategories categories = SpotifyUtils.parseSpotifyCategories(s);
                 // Do something with the parsed categories here
             }
             else {
-                Log.d(TAG, "result is null");
+                Log.d(TAG, "== Result is null");
             }
         }
     }
@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            Log.d(TAG, "Do in Background");
+            Log.d(TAG, "== Do in Background");
             return results;
         }
 
