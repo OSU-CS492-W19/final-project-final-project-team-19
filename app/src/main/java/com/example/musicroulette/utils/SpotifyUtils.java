@@ -107,4 +107,41 @@ public class SpotifyUtils {
     public static class ExternalURLs {
         public String spotify;
     }
+
+
+    /*************************************************************
+     * GET A PLAYLIST'S TRACKS
+     * Get a list of Spotify tracks associated with a certain playlist.
+     *************************************************************/
+    public static Track[] parseSpotifyPlaylist(String json) {
+        Gson gson = new Gson();
+        SpotifyPlaylistTracks results = gson.fromJson(json, SpotifyPlaylistTracks.class);
+        return results.items;
+    }
+
+    public static class SpotifyPlaylistTracks {
+        public Track[] items;
+    }
+
+    public static class Track {
+        public TrackDetails track;
+    }
+
+    public static class TrackDetails {
+        public AlbumDetails album;
+        public String href;
+        public String name;
+        public int popularity;
+    }
+
+    public static class AlbumDetails {
+        public AlbumImage[] images;
+    }
+
+    public static class AlbumImage {
+        public String url;
+        public int height;
+        public int width;
+        public String name;
+    }
 }

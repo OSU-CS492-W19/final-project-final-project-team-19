@@ -26,10 +26,11 @@
                 app:riv_corner_radius="30dip"
                 app:riv_mutate_background="true"
                 android:background="@drawable/image_box_shadow"
-                android:layout_height="450dp"
-                android:layout_width="wrap_content"/>
+                android:layout_height="350dp"
+                android:layout_width="350dp"/>
 
             <Button
+                android:id="@+id/shuffle_button"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_gravity="bottom|right"

@@ -1,13 +1,18 @@
 package com.example.musicroulette;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.example.musicroulette.utils.NetworkUtils;
@@ -21,6 +26,7 @@ import com.squareup.picasso.Transformation;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -30,11 +36,14 @@ public class MainActivity extends AppCompatActivity {
     private String mAccessToken;
     private String mAccessCode;
     private ImageView mAlbumImage;
+    private Button mShuffle;
+    private SharedPreferences mPrefs;
+    private Transformation transformation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-		Transformation transformation = new RoundedTransformationBuilder()
+		transformation = new RoundedTransformationBuilder()
 				.borderColor(Color.BLACK)
 				.borderWidthDp(3)
 				.cornerRadiusDp(30)
@@ -46,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
 
         mAlbumImage = findViewById(R.id.album_art);
         mAlbumImage.setImageResource(R.drawable.slime);
+        mShuffle = findViewById(R.id.shuffle_button);
+
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         if(mAccessToken == null) {
             RequestToken();
@@ -56,6 +68,21 @@ public class MainActivity extends AppCompatActivity {
 				.load("https://is5-ssl.mzstatic.com/image/thumb/Music118/v4/ab/ea/31/abea3194-5ec0-47c8-3644-7e76c195f126/8718857500339.png/999999999x0w.jpg")
 				.transform(transformation)
 				.into(mAlbumImage);
+
+        mShuffle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String genre = mPrefs.getString(
+                        getString(R.string.pref_genre_key),
+                        getString(R.string.pref_genre_default_value)
+                );
+                String url = SpotifyUtils.buildGetACategorysPlaylistsBaseURL(genre);
+                ArrayList<String> params = new ArrayList<>();
+                params.add(url);
+                params.add(mAccessToken);
+                new RetrievePlaylistsOfAGenre().execute(params);
+            }
+        });
     }
 
     public void RequestToken() {
@@ -173,19 +200,98 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            Log.d(TAG, "== Do in Background");
+            Log.d(TAG, "== Playlist Fetching in Background");
             return results;
         }
 
         @Override
         protected void onPostExecute(String s) {
             if(s != null) {
-                Log.d(TAG, s);
                 SpotifyUtils.SpotifyCategoryPlaylists playlists = SpotifyUtils.parseSpotifyCategoryPlaylists(s);
-                // Do something with the parsed category playlists here
+
+                //If playlists were found
+                if(playlists.items.length > 0){
+                    //Get a random number between 0 and the number of playlists returned
+                    int rand = new Random().nextInt(playlists.items.length);
+                    Log.d(TAG, "=== Random Playlist Name: " + playlists.items[rand].name);
+
+                    //Load the playlist image
+                    /*if(playlists.items[rand].images.length > 0) {
+                        //Log.d(TAG, "=== Playlist Image: " + playlists.items[rand].images[0].url);
+                        Picasso.get()
+                                .load(playlists.items[rand].images[0].url)
+                                .transform(transformation)
+                                .into(mAlbumImage);
+                    }*/
+
+                    //Choose a random playlist, grab its URL and get its track list
+                    ArrayList<String> params = new ArrayList<>();
+                    String url = Uri.parse(playlists.items[rand].href).buildUpon()
+                                .appendPath("tracks")
+                                .build()
+                                .toString();
+                    params.add(url);
+                    params.add(mAccessToken);
+                    new RetrieveTracksOfAPlaylist().execute(params);
+                }
             }
             else {
-                Log.d(TAG, "result is null");
+                Log.d(TAG, "=== Result is null");
+            }
+        }
+    }
+
+    /** AsyncTask: RetrieveTracksOfAPlaylist
+     *  Description: Retrieve All Tracks of a Playlist
+     *  Params: url, access token
+     **/
+    class RetrieveTracksOfAPlaylist extends AsyncTask<ArrayList<String>, Void, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(ArrayList<String>... params) {
+            String url = params[0].get(0);
+            String accessToken = params[0].get(1);
+            String results = null;
+
+            try {
+                results = NetworkUtils.doHTTPGet(url, accessToken);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Log.d(TAG, "== Track Fetching in Background");
+            return results;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            if(s != null) {
+                SpotifyUtils.Track[] tracks = SpotifyUtils.parseSpotifyPlaylist(s);
+                Log.d(TAG, "=== Number of tracks in playlist: " + tracks.length);
+
+                //If tracks were found
+                if(tracks.length > 0){
+                    //Get a random number between 0 and the number of tracks in the playlist
+                    int rand = new Random().nextInt(tracks.length);
+                    Log.d(TAG, "=== Random Track Name: " + tracks[rand].track.name);
+                    //Do something with the track name?
+
+                    //Load the track's album image
+                    if(tracks[rand].track.album.images.length > 0) {
+                        Log.d(TAG, "=== Track Album Image: " + tracks[rand].track.album.images[0].url);
+                        Picasso.get()
+                                .load(tracks[rand].track.album.images[0].url)
+                                .transform(transformation)
+                                .into(mAlbumImage);
+                    }
+                }
+            }
+            else {
+                Log.d(TAG, "=== Result is null");
             }
         }
     }
