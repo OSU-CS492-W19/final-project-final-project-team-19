@@ -283,8 +283,18 @@ public class MainActivity extends AppCompatActivity {
                     //Get a random number between 0 and the number of tracks in the playlist
                     int rand = new Random().nextInt(tracks.length);
                     String randomTrack = tracks[rand].track.name;
-                    String randomArtist = tracks[rand].track.name;
+                    String randomArtist = "";
                     Log.d(TAG, "=== Random Track Name: " + randomTrack);
+
+                    for(int i = 1; i <= tracks[rand].track.artists.length; i++){    //For each artist
+                        //If the person is actually an artist, add them to the artist string list
+                        if("artist".equals(tracks[rand].track.artists[i-1].type)) {
+                            Log.d(TAG, "=== Track Artist " + i + ": " + tracks[rand].track.artists[i - 1].name);
+                            randomArtist += tracks[rand].track.artists[i - 1].name + ", ";
+                        }
+                    }
+                    randomArtist = randomArtist.substring(0, randomArtist.length() - 2);    //Remove extra comma
+                    Log.d(TAG, "=== Track Artists: " + randomArtist);
 
                     //Do something with the track name?
 					mSongName.setText(randomTrack);
