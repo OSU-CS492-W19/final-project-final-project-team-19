@@ -298,6 +298,7 @@ public class MainActivity extends AppCompatActivity {
 
                     //Do something with the track name?
 					mSongName.setText(randomTrack);
+					mArtistName.setText(randomArtist);
 
                     //Load the track's album image
                     if(tracks[rand].track.album.images.length > 0) {
