@@ -1,6 +1,7 @@
 package com.example.musicroulette;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,13 +10,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
-
 import com.example.musicroulette.utils.NetworkUtils;
 import com.example.musicroulette.utils.SpotifyUtils;
+import com.makeramen.roundedimageview.RoundedTransformationBuilder;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,6 +33,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+		Transformation transformation = new RoundedTransformationBuilder()
+				.borderColor(Color.BLACK)
+				.borderWidthDp(3)
+				.cornerRadiusDp(30)
+				.oval(false)
+				.build();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -42,8 +52,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // test loading image from url
-        Picasso.get().load("https://is5-ssl.mzstatic.com/image/thumb/Music118/v4/ab/ea/31/abea3194-5ec0-47c8-3644-7e76c195f126/8718857500339.png/999999999x0w.jpg").transform(new CircleTransform()).into(mAlbumImage);
-
+		Picasso.get()
+				.load("https://is5-ssl.mzstatic.com/image/thumb/Music118/v4/ab/ea/31/abea3194-5ec0-47c8-3644-7e76c195f126/8718857500339.png/999999999x0w.jpg")
+				.transform(transformation)
+				.into(mAlbumImage);
     }
 
     public void RequestToken() {
