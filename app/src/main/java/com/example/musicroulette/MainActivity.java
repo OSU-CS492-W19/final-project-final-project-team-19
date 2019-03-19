@@ -15,6 +15,7 @@ import com.example.musicroulette.utils.SpotifyUtils;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
         if(mAccessToken == null) {
             RequestToken();
         }
+
+        // test for album view
+        Picasso.get().load("https://is5-ssl.mzstatic.com/image/thumb/Music118/v4/ab/ea/31/abea3194-5ec0-47c8-3644-7e76c195f126/8718857500339.png/999999999x0w.jpg").into(mAlbumImage);
 
     }
 
