@@ -60,10 +60,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
                 startActivity(settingsIntent);
                 return true;
-            case R.id.action_discover:
-                Intent discoverIntent = new Intent(this, MainActivity.class);
-                startActivity(discoverIntent);
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
