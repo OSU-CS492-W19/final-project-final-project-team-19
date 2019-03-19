@@ -161,5 +161,7 @@ public class SpotifyUtils {
         public String savedAlbumImageURL;
         public String savedSongName;
         public String savedArtistName;
+        public String savedSongURL;
+        public String savedSongUri;
     }
 }

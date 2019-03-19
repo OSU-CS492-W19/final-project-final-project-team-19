@@ -7,8 +7,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -24,7 +22,6 @@ import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Transformation;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView mArtistName;
     private Button mShuffle;
     private SharedPreferences mPrefs;
-    private Transformation transformation;
 
     private Button mOpenSpotify;
     private String mSongUri;
@@ -53,17 +49,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-//		transformation = new RoundedTransformationBuilder()
-//				.cornerRadiusDp(20)
-//				.oval(false)
-//				.build();
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         mAlbumImage = findViewById(R.id.album_art);
-//        mAlbumImage.setImageResource(R.drawable.slime);
         mShuffle = findViewById(R.id.shuffle_button);
         mOpenSpotify = findViewById(R.id.btn_open_spotify);
 
@@ -75,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState != null && savedInstanceState.containsKey(SAVED_REPO_KEY)) {
             savedTrackRepo = (SpotifyUtils.SpotifyTrackRepo) savedInstanceState.getSerializable(SAVED_REPO_KEY);
+            Log.d(TAG, "=== Loading Data from Saved Instance");
 
             mArtistName = findViewById(R.id.song_artist);
             mSongName = findViewById(R.id.song_title);
@@ -84,6 +74,9 @@ public class MainActivity extends AppCompatActivity {
                     .into(mAlbumImage);
             mSongName.setText(savedTrackRepo.savedSongName);
             mArtistName.setText(savedTrackRepo.savedArtistName);
+
+            mSongUri = savedTrackRepo.savedSongUri;
+            mSongSpotifyUrl = savedTrackRepo.savedSongURL;
         }
 
         if(mAccessToken == null) {
@@ -91,15 +84,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Placeholder image if there is no current image in the view
-		if (mAlbumImage.getDrawable() == null)
-		{
+		if (mAlbumImage.getDrawable() == null) {
 			Picasso.get()
 					.load("https://developer.spotify.com/assets/branding-guidelines/icon4@2x.png")
-//					.transform(transformation)
 					.into(mAlbumImage);
 		}
 
-
+        //When shuffle button is pressed
         mShuffle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -283,13 +274,13 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG, "=== Random Playlist Name: " + playlists.items[rand].name);
 
                         //Load the playlist image
-                    /*if(playlists.items[rand].images.length > 0) {
-                        //Log.d(TAG, "=== Playlist Image: " + playlists.items[rand].images[0].url);
-                        Picasso.get()
-                                .load(playlists.items[rand].images[0].url)
-                                .transform(transformation)
-                                .into(mAlbumImage);
-                    }*/
+                        /*if(playlists.items[rand].images.length > 0) {
+                            //Log.d(TAG, "=== Playlist Image: " + playlists.items[rand].images[0].url);
+                            Picasso.get()
+                                    .load(playlists.items[rand].images[0].url)
+                                    .transform(transformation)
+                                    .into(mAlbumImage);
+                        }*/
 
                         //Choose a random playlist, grab its URL and get its track list
                         ArrayList<String> params = new ArrayList<>();
@@ -356,7 +347,6 @@ public class MainActivity extends AppCompatActivity {
                     for(int i = 1; i <= tracks[rand].track.artists.length; i++){    //For each artist
                         //If the person is actually an artist, add them to the artist string list
                         if("artist".equals(tracks[rand].track.artists[i-1].type)) {
-                            Log.d(TAG, "=== Track Artist " + i + ": " + tracks[rand].track.artists[i - 1].name);
                             randomArtist += tracks[rand].track.artists[i - 1].name + ", ";
                         }
                     }
@@ -387,6 +377,12 @@ public class MainActivity extends AppCompatActivity {
                     //Log.d(TAG, "=== Track URL: " + tracks[rand].track.href);
                     mSongUri = tracks[rand].track.uri;
                     mSongSpotifyUrl = tracks[rand].track.external_urls.spotify;
+
+                    savedTrackRepo.savedSongUri = tracks[rand].track.uri;
+                    savedTrackRepo.savedSongURL = tracks[rand].track.external_urls.spotify;
+
+                    Log.d(TAG, "***** Saved Song Uri: " + savedTrackRepo.savedSongUri);
+                    Log.d(TAG, "***** Saved Song URL: " + savedTrackRepo.savedSongURL);
                 }
             }
             else {
