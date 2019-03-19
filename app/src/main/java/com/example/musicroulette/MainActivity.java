@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private String mSongUri;
     private String mSongSpotifyUrl;
 
-    private SpotifyUtils.SpotifyTrackRepo savedTrackRepo = new SpotifyUtils.SpotifyTrackRepo();
+    private SpotifyUtils.SpotifyTrackRepo savedTrackRepo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,12 +67,18 @@ public class MainActivity extends AppCompatActivity {
         mShuffle = findViewById(R.id.shuffle_button);
         mOpenSpotify = findViewById(R.id.btn_open_spotify);
 
+        savedTrackRepo = new SpotifyUtils.SpotifyTrackRepo();
+
         mSongUri = null;
         mSongSpotifyUrl = null;
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         if (savedInstanceState != null && savedInstanceState.containsKey(SAVED_REPO_KEY)) {
             savedTrackRepo = (SpotifyUtils.SpotifyTrackRepo) savedInstanceState.getSerializable(SAVED_REPO_KEY);
+
+            mArtistName = findViewById(R.id.song_artist);
+            mSongName = findViewById(R.id.song_title);
+
             Picasso.get()
                     .load(savedTrackRepo.savedAlbumImageURL)
                     .into(mAlbumImage);
