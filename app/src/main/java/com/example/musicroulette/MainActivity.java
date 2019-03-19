@@ -2,6 +2,7 @@ package com.example.musicroulette;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -25,6 +26,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -39,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
     private Button mShuffle;
     private SharedPreferences mPrefs;
     private Transformation transformation;
+
+    private Button mOpenSpotify;
+    private String mSongUri;
+    private String mSongSpotifyUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +62,10 @@ public class MainActivity extends AppCompatActivity {
         mAlbumImage = findViewById(R.id.album_art);
         mAlbumImage.setImageResource(R.drawable.slime);
         mShuffle = findViewById(R.id.shuffle_button);
+        mOpenSpotify = findViewById(R.id.btn_open_spotify);
 
+        mSongUri = null;
+        mSongSpotifyUrl = null;
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         if(mAccessToken == null) {
@@ -81,6 +90,36 @@ public class MainActivity extends AppCompatActivity {
                 params.add(url);
                 params.add(mAccessToken);
                 new RetrievePlaylistsOfAGenre().execute(params);
+            }
+        });
+
+        mOpenSpotify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "=== App Spotify Song Uri: " + mSongUri);
+                Log.d(TAG, "=== Browser Spotify Url: " + mSongSpotifyUrl);
+
+                if(mSongUri != null && mSongSpotifyUrl != null) {
+                    PackageManager pm = getPackageManager();
+                    boolean isSpotifyInstalled;
+                    try {   //Try to open the spotify app
+                        pm.getPackageInfo("com.spotify.music", 0);
+                        isSpotifyInstalled = true;
+                    } catch (PackageManager.NameNotFoundException e) {
+                        isSpotifyInstalled = false;
+                    }
+
+                    if (isSpotifyInstalled) {   //If the Spotify App is installed, open the song in the app
+                        Uri trackURL = Uri.parse(mSongUri);
+                        Intent intent = new Intent(Intent.ACTION_VIEW, trackURL);
+                        startActivity(intent);
+                    }
+                    else {                      //If Spotify App is not install, open the song in browser Spotify
+                        Uri trackURL = Uri.parse(mSongSpotifyUrl);
+                        Intent intent = new Intent(Intent.ACTION_VIEW, trackURL);
+                        startActivity(intent);
+                    }
+                }
             }
         });
     }
@@ -206,12 +245,13 @@ public class MainActivity extends AppCompatActivity {
                 SpotifyUtils.SpotifyCategoryPlaylists playlists = SpotifyUtils.parseSpotifyCategoryPlaylists(s);
 
                 //If playlists were found
-                if(playlists.items.length > 0){
-                    //Get a random number between 0 and the number of playlists returned
-                    int rand = new Random().nextInt(playlists.items.length);
-                    Log.d(TAG, "=== Random Playlist Name: " + playlists.items[rand].name);
+                if(playlists != null) {
+                    if (playlists.items.length > 0) {
+                        //Get a random number between 0 and the number of playlists returned
+                        int rand = new Random().nextInt(playlists.items.length);
+                        Log.d(TAG, "=== Random Playlist Name: " + playlists.items[rand].name);
 
-                    //Load the playlist image
+                        //Load the playlist image
                     /*if(playlists.items[rand].images.length > 0) {
                         //Log.d(TAG, "=== Playlist Image: " + playlists.items[rand].images[0].url);
                         Picasso.get()
@@ -220,15 +260,16 @@ public class MainActivity extends AppCompatActivity {
                                 .into(mAlbumImage);
                     }*/
 
-                    //Choose a random playlist, grab its URL and get its track list
-                    ArrayList<String> params = new ArrayList<>();
-                    String url = Uri.parse(playlists.items[rand].href).buildUpon()
+                        //Choose a random playlist, grab its URL and get its track list
+                        ArrayList<String> params = new ArrayList<>();
+                        String url = Uri.parse(playlists.items[rand].href).buildUpon()
                                 .appendPath("tracks")
                                 .build()
                                 .toString();
-                    params.add(url);
-                    params.add(mAccessToken);
-                    new RetrieveTracksOfAPlaylist().execute(params);
+                        params.add(url);
+                        params.add(mAccessToken);
+                        new RetrieveTracksOfAPlaylist().execute(params);
+                    }
                 }
             }
             else {
@@ -267,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String s) {
             if(s != null) {
                 SpotifyUtils.Track[] tracks = SpotifyUtils.parseSpotifyPlaylist(s);
-                Log.d(TAG, "=== Number of tracks in playlist: " + tracks.length);
+                //Log.d(TAG, "=== Number of tracks in playlist: " + tracks.length);
 
                 //If tracks were found
                 if(tracks.length > 0){
@@ -278,12 +319,16 @@ public class MainActivity extends AppCompatActivity {
 
                     //Load the track's album image
                     if(tracks[rand].track.album.images.length > 0) {
-                        Log.d(TAG, "=== Track Album Image: " + tracks[rand].track.album.images[0].url);
+                        //Log.d(TAG, "=== Track Album Image: " + tracks[rand].track.album.images[0].url);
                         Picasso.get()
                                 .load(tracks[rand].track.album.images[0].url)
                                 .transform(transformation)
                                 .into(mAlbumImage);
                     }
+
+                    //Log.d(TAG, "=== Track URL: " + tracks[rand].track.href);
+                    mSongUri = tracks[rand].track.uri;
+                    mSongSpotifyUrl = tracks[rand].track.external_urls.spotify;
                 }
             }
             else {
