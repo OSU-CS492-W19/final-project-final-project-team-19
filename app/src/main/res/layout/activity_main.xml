@@ -7,8 +7,6 @@
     tools:context=".MainActivity">
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -19,15 +17,14 @@
             android:layout_height="wrap_content"
             android:padding="30dp">
 
-            <com.makeramen.roundedimageview.RoundedImageView
-                xmlns:app="http://schemas.android.com/apk/res-auto"
+            <com.makeramen.roundedimageview.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/album_art"
-                android:scaleType="centerCrop"
-                app:riv_corner_radius="30dip"
-                app:riv_mutate_background="true"
+                android:layout_width="350dp"
+                android:layout_height="450dp"
                 android:background="@drawable/image_box_shadow"
-                android:layout_height="350dp"
-                android:layout_width="350dp"/>
+                android:scaleType="centerCrop"
+                app:riv_corner_radius="35dp"
+                app:riv_mutate_background="true" />
 
             <Button
                 android:id="@+id/shuffle_button"
@@ -36,7 +33,36 @@
                 android:layout_gravity="bottom|right"
                 android:background="@drawable/round_button"
                 android:drawableLeft="@drawable/ic_shuffle"
-                android:paddingLeft="18dp"/>
+                android:paddingLeft="18dp" />
+
+            <TextView
+                android:id="@+id/song_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|left"
+                android:layout_marginBottom="45dp"
+                android:paddingLeft="26dp"
+                android:paddingRight="26dp"
+                android:paddingBottom="30dp"
+                android:shadowColor="@color/text_shadow"
+                android:shadowRadius="50"
+                android:textColor="#FFFFFF"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/song_artist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|left"
+                android:paddingLeft="26dp"
+                android:paddingRight="45dp"
+                android:paddingBottom="30dp"
+                android:shadowColor="@color/text_shadow"
+                android:shadowRadius="50"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="normal" />
 
         </FrameLayout>
     </LinearLayout>
