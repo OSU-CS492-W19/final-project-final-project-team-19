@@ -3,11 +3,12 @@ package com.example.musicroulette;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -19,7 +20,6 @@ import android.widget.TextView;
 
 import com.example.musicroulette.utils.NetworkUtils;
 import com.example.musicroulette.utils.SpotifyUtils;
-import com.makeramen.roundedimageview.RoundedTransformationBuilder;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -27,7 +27,6 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -35,6 +34,7 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String SAVED_REPO_KEY = "spotifyRepo";
 
     private String mAccessToken;
     private String mAccessCode;
@@ -48,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     private Button mOpenSpotify;
     private String mSongUri;
     private String mSongSpotifyUrl;
+
+    private SpotifyUtils.SpotifyTrackRepo savedTrackRepo = new SpotifyUtils.SpotifyTrackRepo();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +70,15 @@ public class MainActivity extends AppCompatActivity {
         mSongUri = null;
         mSongSpotifyUrl = null;
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        if (savedInstanceState != null && savedInstanceState.containsKey(SAVED_REPO_KEY)) {
+            savedTrackRepo = (SpotifyUtils.SpotifyTrackRepo) savedInstanceState.getSerializable(SAVED_REPO_KEY);
+            Picasso.get()
+                    .load(savedTrackRepo.savedAlbumImageURL)
+                    .into(mAlbumImage);
+            mSongName.setText(savedTrackRepo.savedSongName);
+            mArtistName.setText(savedTrackRepo.savedArtistName);
+        }
 
         if(mAccessToken == null) {
             RequestToken();
@@ -128,6 +139,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (savedTrackRepo != null) {
+            outState.putSerializable(SAVED_REPO_KEY, savedTrackRepo);
+        }
     }
 
     public void RequestToken() {
@@ -342,12 +361,21 @@ public class MainActivity extends AppCompatActivity {
 					mSongName.setText(randomTrack);
 					mArtistName.setText(randomArtist);
 
+					savedTrackRepo.savedSongName = randomTrack;
+					savedTrackRepo.savedArtistName = randomArtist;
+
+                    Log.d(TAG, "***** Saved Song Name: " + savedTrackRepo.savedSongName);
+                    Log.d(TAG, "***** Saved Artist Name: " + savedTrackRepo.savedArtistName);
+
                     //Load the track's album image
                     if(tracks[rand].track.album.images.length > 0) {
                         //Log.d(TAG, "=== Track Album Image: " + tracks[rand].track.album.images[0].url);
                         Picasso.get()
                                 .load(tracks[rand].track.album.images[0].url)
                                 .into(mAlbumImage);
+
+                        savedTrackRepo.savedAlbumImageURL = tracks[rand].track.album.images[0].url;
+                        Log.d(TAG, "***** Saved Image URL: " + savedTrackRepo.savedAlbumImageURL);
                     }
 
                     //Log.d(TAG, "=== Track URL: " + tracks[rand].track.href);
@@ -360,5 +388,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
 }

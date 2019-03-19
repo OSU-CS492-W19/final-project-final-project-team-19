@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
+import java.io.Serializable;
 import java.net.URI;
 
 
@@ -154,5 +155,11 @@ public class SpotifyUtils {
 
     public static class SpotifyUrl {
         public String spotify;
+    }
+
+    public static class SpotifyTrackRepo implements Serializable {
+        public String savedAlbumImageURL;
+        public String savedSongName;
+        public String savedArtistName;
     }
 }
