@@ -19,13 +19,18 @@
             android:layout_height="wrap_content"
             android:padding="30dp">
 
-            <android.support.v7.widget.AppCompatImageView
+            <com.makeramen.roundedimageview.RoundedImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/album_art"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/image_box_shadow"/>
+                android:scaleType="centerCrop"
+                app:riv_corner_radius="30dip"
+                app:riv_mutate_background="true"
+                android:background="@drawable/image_box_shadow"
+                android:layout_height="350dp"
+                android:layout_width="350dp"/>
 
             <Button
+                android:id="@+id/shuffle_button"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_gravity="bottom|right"
@@ -40,7 +45,7 @@
         android:id="@+id/btn_open_spotify"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="OPEN IN SPOTIFY"
+        android:text="@string/open_in_spotify_btn"
         android:textSize="22sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
