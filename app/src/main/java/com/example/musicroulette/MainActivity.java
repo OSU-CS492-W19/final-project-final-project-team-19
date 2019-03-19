@@ -44,9 +44,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
 		transformation = new RoundedTransformationBuilder()
-				.borderColor(Color.BLACK)
-				.borderWidthDp(3)
-				.cornerRadiusDp(30)
+				.cornerRadiusDp(20)
 				.oval(false)
 				.build();
 
@@ -63,9 +61,9 @@ public class MainActivity extends AppCompatActivity {
             RequestToken();
         }
 
-        // test loading image from url
+        // Placeholder Image
 		Picasso.get()
-				.load("https://is5-ssl.mzstatic.com/image/thumb/Music118/v4/ab/ea/31/abea3194-5ec0-47c8-3644-7e76c195f126/8718857500339.png/999999999x0w.jpg")
+				.load("https://developer.spotify.com/assets/branding-guidelines/icon4@2x.png")
 				.transform(transformation)
 				.into(mAlbumImage);
 
@@ -76,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
                         getString(R.string.pref_genre_key),
                         getString(R.string.pref_genre_default_value)
                 );
+				Log.d(TAG, "== Genre: " + genre);
                 String url = SpotifyUtils.buildGetACategorysPlaylistsBaseURL(genre);
                 ArrayList<String> params = new ArrayList<>();
                 params.add(url);
