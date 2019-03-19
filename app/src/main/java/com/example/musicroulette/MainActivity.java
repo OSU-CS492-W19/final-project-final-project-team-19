@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // test loading image from url
-        Picasso.get().load("https://is5-ssl.mzstatic.com/image/thumb/Music118/v4/ab/ea/31/abea3194-5ec0-47c8-3644-7e76c195f126/8718857500339.png/999999999x0w.jpg").into(mAlbumImage);
+        Picasso.get().load("https://is5-ssl.mzstatic.com/image/thumb/Music118/v4/ab/ea/31/abea3194-5ec0-47c8-3644-7e76c195f126/8718857500339.png/999999999x0w.jpg").transform(new CircleTransform()).into(mAlbumImage);
 
     }
 
