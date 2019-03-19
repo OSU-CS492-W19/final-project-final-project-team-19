@@ -131,8 +131,9 @@ public class SpotifyUtils {
         public AlbumDetails album;
         public Artist[] artists;
         public String href;
+        public SpotifyUrl external_urls;
         public String name;
-        public int popularity;
+        public String uri;
     }
 
     public static class AlbumDetails {
@@ -149,5 +150,9 @@ public class SpotifyUtils {
     public static class Artist {
         public String name;
         public String type;
+    }
+
+    public static class SpotifyUrl {
+        public String spotify;
     }
 }
